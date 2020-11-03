@@ -1,5 +1,5 @@
 import math
-from random import getrandbits, randrange, shuffle
+from random import getrandbits, randrange, shuffle, random
 from typing import Collection, List, Tuple
 
 class Knapsack:
@@ -97,12 +97,111 @@ def hill_climber_first_improvement(knapsack: Knapsack, max_nb_eval: int) -> Tupl
     return base_score, nb_eval
 
 
+def initial_temp(knapsack, n=None, tau_zero=0.35) -> float:
+    if n is None:
+        n = knapsack.items // 10
+
+    sum_delta = 0
+
+    for _ in range(n):
+        s = random_solution(knapsack)
+        score_s = knapsack.evaluate(s)
+        index = randrange(knapsack.items)
+        s[index] = not s[index]
+        score_sprime = knapsack.evaluate(s)
+        sum_delta += score_sprime - score_s
+
+    avg_delta = sum_delta / n
+
+    # ln(tau_zero) = avg_delta / T_zero
+    # T_zero = avg_delta / ln(tau_zero)
+
+    return avg_delta / math.log(tau_zero)
+
+
+def recuit_simule(knapsack) -> Tuple[float, int]:
+    s = random_solution(knapsack)
+    score_s = knapsack.evaluate(s)
+    nb_eval = 1
+    # T = initial_temp(knapsack)
+    T = 50
+    alpha = 0.9
+
+    n_sans_accept = 0
+    n_tentees = 0
+    n_acceptees = 0
+    while True:
+        index = randrange(knapsack.items)
+        s[index] = not s[index]
+        score_sprime = knapsack.evaluate(s)
+        nb_eval += 1
+        delta = score_sprime - score_s
+
+        keep = False
+
+        if delta>0:
+            keep = True
+        else:
+            u = random()
+            print(score_sprime, delta/T, T)
+            if u < math.exp(delta/T):
+                keep = True
+
+        n_tentees +=1
+
+        if keep:
+            score_s = score_sprime
+            n_sans_accept = 0
+            n_acceptees += 1
+        else:
+            s[index] = not s[index]
+            n_sans_accept += 1
+
+        if n_tentees == 100:
+            n_tentees = 0
+            T *= alpha
+        if n_acceptees == 12:
+            n_acceptees = 0
+            T *= alpha
+
+        if n_sans_accept == 30:
+            print("n_sans_accept == 30")
+            break
+
+    return score_s, nb_eval
+
+
+def perturbation(s: List[bool], k: int):
+    for _ in range(k):
+        i = randrange(len(s))
+        s[i] = not s[i]
+
+
+def iterated_local_search(knapsack) -> Tuple[float, int]:
+    """
+    s = random_solution(knapsack)
+    score_s = knapsack.evaluate(s)
+    nb_eval = 1
+    s←localSearch(s)
+    while True:
+        s′←perturbation(s)
+        s′←localSearch(s′)
+        Si accept(s,s′) Alors
+            s←s′
+        if Critère d’arrêt vérifié:
+            break
+    return score_s, nb_eval
+    """
+
+
 def main():
     knapsack = Knapsack("./ks_1000.dat")
 
     #score, evals = hill_climber_best_improvement(knapsack)
     #print(score, evals)
-    score, evals = hill_climber_first_improvement(knapsack, 200_000)
+    #score, evals = hill_climber_first_improvement(knapsack, 200_000)
+    #print(score, evals)
+    score, evals = recuit_simule(knapsack)
     print(score, evals)
 
 
