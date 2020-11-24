@@ -3,15 +3,19 @@ from typing import NamedTuple, Tuple
 
 from knapsack import Knapsack, Solution, random_solution
 
+
 class Individu(NamedTuple):
     solution: Solution
     score: float
+
 
 class Population:
     def __init__(self, mu: int, knapsack: Knapsack):
         self.knapsack = knapsack
         parents = [random_solution(knapsack) for i in range(mu)]
-        self._population = [Individu(parent, knapsack.evaluate(parent)) for parent in parents]
+        self._population = [
+            Individu(parent, knapsack.evaluate(parent)) for parent in parents
+        ]
         self.mu = mu
 
     @staticmethod
@@ -34,17 +38,22 @@ class Population:
     def run(self, iters: int) -> Tuple[int, float]:
         evaluations = len(self._population)
         self._population.sort(key=lambda individu: individu.score, reverse=True)
-        for i in range(iters):
-            for j in range(self.mu//2): # generate mu/2 couples, for a total 2*mu population after reinsertion
+        for _i in range(iters):
+            for _j in range(
+                self.mu // 2
+            ):  # generate mu/2 couples, for a total 2*mu population after reinsertion
                 parent_a = random.choice(self._population).solution
                 parent_b = random.choice(self._population).solution
                 child_a, child_b = Population.children(parent_a, parent_b)
-                self._population.append(Individu(child_a, self.knapsack.evaluate(child_a)))
-                self._population.append(Individu(child_b, self.knapsack.evaluate(child_b)))
+                self._population.append(
+                    Individu(child_a, self.knapsack.evaluate(child_a))
+                )
+                self._population.append(
+                    Individu(child_b, self.knapsack.evaluate(child_b))
+                )
                 evaluations += 2
             # Selection
             self._population.sort(key=lambda individu: individu.score, reverse=True)
-            self._population = self._population[:self.mu]
+            self._population = self._population[: self.mu]
 
         return evaluations, self._population[0].score
-

@@ -32,6 +32,6 @@ def search(knapsack: Knapsack, max_evals: int) -> Tuple[float, int]:
             base_solution[index_solution] = not base_solution[index_solution]
             base_score = best_score
         else:
-            break # Optimum local
+            break  # Optimum local
 
     return base_score, nb_eval

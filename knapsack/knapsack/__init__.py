@@ -4,8 +4,10 @@ from typing import Collection, List, Tuple
 
 Solution = List[bool]
 
+
 class Knapsack:
     """A container for the required data to describe a knapsack situation."""
+
     def __init__(self, path: str):
         with open(path, "r") as data:
             self.items = int(data.readline())
@@ -13,8 +15,9 @@ class Knapsack:
             self.weights = [int(elm) for elm in data.readline().split()]
             self.max_weight = int(data.readline())
 
-        self.beta = max([profit/weight for (profit, weight) in zip(self.profits, self.weights)])
-
+        self.beta = max(
+            [profit / weight for (profit, weight) in zip(self.profits, self.weights)]
+        )
 
     def evaluate(self, solution: List[bool]) -> float:
         """Compute the score for a solution."""
@@ -77,14 +80,14 @@ def recuit_simule(knapsack) -> Tuple[float, int]:
 
         keep = False
 
-        if delta>0:
+        if delta > 0:
             keep = True
         else:
             u = random()
-            if u < math.exp(delta/T):
+            if u < math.exp(delta / T):
                 keep = True
 
-        n_tentees +=1
+        n_tentees += 1
 
         if keep:
             score_s = score_sprime
