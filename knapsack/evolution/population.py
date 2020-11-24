@@ -31,7 +31,8 @@ class Population:
             if random.random() <= 1 / len(solution):
                 solution[index] = not value
 
-    def run(self, iters: int) -> Tuple[Solution, float]:
+    def run(self, iters: int) -> Tuple[int, float]:
+        evaluations = len(self._population)
         self._population.sort(key=lambda individu: individu.score, reverse=True)
         for i in range(iters):
             for j in range(self.mu//2): # generate mu/2 couples, for a total 2*mu population after reinsertion
@@ -40,9 +41,10 @@ class Population:
                 child_a, child_b = Population.children(parent_a, parent_b)
                 self._population.append(Individu(child_a, self.knapsack.evaluate(child_a)))
                 self._population.append(Individu(child_b, self.knapsack.evaluate(child_b)))
+                evaluations += 2
             # Selection
             self._population.sort(key=lambda individu: individu.score, reverse=True)
             self._population = self._population[:self.mu]
 
-        return self._population[0]
+        return evaluations, self._population[0].score
 

@@ -35,7 +35,7 @@ def random_solution(knapsack: Knapsack) -> List[bool]:
     return [bool(getrandbits(1)) for i in range(len(knapsack.weights))]
 
 
-def hill_climber_best_improvement(knapsack: Knapsack) -> Tuple[float, int]:
+def hill_climber_best_improvement(knapsack: Knapsack, max_evals: int) -> Tuple[float, int]:
     """Use the hill climber best improvement to find a solution."""
     base_solution = random_solution(knapsack)
     base_score = knapsack.evaluate(base_solution)
@@ -55,6 +55,9 @@ def hill_climber_best_improvement(knapsack: Knapsack) -> Tuple[float, int]:
                 index_solution = i
 
             base_solution[i] = not base_solution[i]
+
+        if nb_eval >= max_evals:
+            break
 
         if best_score > base_score:
             base_solution[index_solution] = not base_solution[index_solution]
@@ -85,12 +88,10 @@ def hill_climber_first_improvement(knapsack: Knapsack, max_nb_eval: int) -> Tupl
             base_solution[index] = not base_solution[index]
 
         if current_score > base_score:
-            print(f"Found a better solution: {current_score} > {base_score}")
             base_score = current_score
             index = voisins_possibles[index_voisin]
             base_solution[index] = not base_solution[index]
         elif index_voisin +1 == len(voisins_possibles):
-            print("Out of neighbours")
             break # optimum local
 
         if nb_eval >= max_nb_eval:
@@ -145,7 +146,6 @@ def recuit_simule(knapsack) -> Tuple[float, int]:
             keep = True
         else:
             u = random()
-            print(score_sprime, delta/T, T)
             if u < math.exp(delta/T):
                 keep = True
 
@@ -167,7 +167,6 @@ def recuit_simule(knapsack) -> Tuple[float, int]:
             T *= alpha
 
         if n_sans_accept == 30:
-            print("n_sans_accept == 30")
             break
 
     return score_s, nb_eval
