@@ -2,6 +2,8 @@ import math
 from random import getrandbits, randrange, shuffle, random
 from typing import Collection, List, Tuple
 
+Solution = List[bool]
+
 class Knapsack:
     """A container for the required data to describe a knapsack situation."""
     def __init__(self, path: str):
@@ -192,18 +194,3 @@ def iterated_local_search(knapsack) -> Tuple[float, int]:
             break
     return score_s, nb_eval
     """
-
-
-def main():
-    knapsack = Knapsack("./ks_1000.dat")
-
-    #score, evals = hill_climber_best_improvement(knapsack)
-    #print(score, evals)
-    #score, evals = hill_climber_first_improvement(knapsack, 200_000)
-    #print(score, evals)
-    score, evals = recuit_simule(knapsack)
-    print(score, evals)
-
-
-if __name__ == '__main__':
-    main()
