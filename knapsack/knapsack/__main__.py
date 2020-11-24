@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 
-from knapsack import Knapsack, hill_climber_best_improvement, hill_climber_first_improvement
+from knapsack import Knapsack
+from hillclimbing.first import search as hc_first
+from hillclimbing.best import search as hc_best
 from evolution.population import Population
 
 def main():
@@ -15,7 +17,7 @@ def main():
         total_score = 0
         total_eval = 0
         for repeat in range(repeats):
-            score, evaluations = hill_climber_best_improvement(knapsack, iters)
+            score, evaluations = hc_best(knapsack, iters)
             total_score += score
             total_eval += evaluations
         average_score.append(total_score/repeats)
@@ -32,7 +34,7 @@ def main():
         total_score = 0
         total_eval = 0
         for repeat in range(repeats):
-            score, evaluations = hill_climber_first_improvement(knapsack, iters)
+            score, evaluations = hc_first(knapsack, iters)
             total_score += score
             total_eval += evaluations
         average_score.append(total_score/repeats)
